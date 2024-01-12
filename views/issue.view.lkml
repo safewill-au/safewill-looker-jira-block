@@ -38,6 +38,18 @@ view: issue {
     hidden: yes
   }
 
+  dimension: project_link {
+    type: number
+    sql: ${TABLE}.project ;; 
+    description: "Project ID Link"
+  }
+
+  dimension: issue_link {
+    type: number
+    sql: ${TABLE}.issue_type ;; 
+    description: "Issue ID link"
+  }
+
   dimension: priority {
     type: number
     hidden: yes

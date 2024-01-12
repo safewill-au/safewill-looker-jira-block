@@ -8,6 +8,26 @@ explore: issue {
     sql_on: ${issue_board.issue_id} = ${issue.id} ;;
     relationship: one_to_many
   }
+
+  join: issue_multiselect_history_component {
+    sql_on:  ${issue.id} = ${issue_multiselect_history_component.issue_id} ;;
+    relationship: one_to_many
+  }
+
+  join: issue_field_history_timespent {
+    sql_on: ${issue.id} = ${issue_field_history_timespent.issue_id} ;;
+    relationship: one_to_many
+  }
+
+  join: issue_type {
+    sql_on: ${issue.issue_link} = ${issue_type.id} ;;
+    relationship: one_to_many
+  }
+
+  join: component {
+    sql_on: CAST(${component.id} as STRING) = CAST(${issue_multiselect_history_component.value} as STRING) ;;
+    relationship: one_to_many
+  }
   join: board {
     type: left_outer
     sql_on: ${issue_board.board_id} = ${board.id} ;;
@@ -26,7 +46,7 @@ explore: issue {
   }
   join: project {
     type: left_outer
-    sql_on:  ${project_board.project_id} = ${project.id}  ;;
+    sql_on:  ${issue.project_link} = ${project.id}  ;;
     relationship: one_to_many
   }
   join: sla {
@@ -37,11 +57,6 @@ explore: issue {
   join: sprint {
     type: left_outer
     sql_on: ${board.id} = ${sprint.board_id} ;;
-    relationship: many_to_one
-  }
-  join:  issue_type {
-    type:  left_outer
-    sql_on: ${issue.id} = ${issue_type.id} ;;
     relationship: many_to_one
   }
   join:  priority {
