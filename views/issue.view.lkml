@@ -98,6 +98,7 @@ view: issue {
 
   measure: count {
     type: count
+    drill_fields: [key]
   }
 
   measure: number_of_open_issues {
@@ -107,6 +108,7 @@ view: issue {
       field: status_category.name
       value: "-Closed"
     }
+    drill_fields: [key]
   }
 
   measure: number_of_closed_issues {
@@ -116,7 +118,7 @@ view: issue {
       field: status_category.name
       value: "Closed"
     }
+    drill_fields: [key]
   }
-
 
 }
