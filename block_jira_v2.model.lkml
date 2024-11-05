@@ -9,3 +9,5 @@ datagroup: fivetran_datagroup {
 }
 
 persist_with: fivetran_datagroup
+
+label: "Jira"
