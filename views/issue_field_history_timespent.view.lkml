@@ -1,25 +1,19 @@
 view: issue_field_history_timespent {
-
-  sql_table_name: @{SCHEMA_NAME}.issue_field_history ;;
-  sql_always_where: ${field_id} = 'timespent' ;;
-
-  dimension_group: _fivetran_synced {
-    type: time
-    timeframes: [
-      raw,
-      time,
-      date,
-      week,
-      month,
-      quarter,
-      year
-    ]
-    sql: ${TABLE}._FIVETRAN_SYNCED ;;
+  derived_table: {
+    sql:
+      select
+        * replace(cast(value as float64) as value),
+        cast(value as float64) - coalesce(
+          lag(cast(value as float64)) over (partition by issue_id order by time), 0
+        ) as time_spent
+      from @{SCHEMA_NAME}.issue_field_history
+      where field_id = 'timespent' and value is not null
+    ;;
   }
 
   dimension: issue_id {
     type: number
-    sql: ${TABLE}.ISSUE_ID ;;
+    sql: ${TABLE}.issue_id ;;
   }
 
   dimension: field_id {
@@ -51,25 +45,26 @@ view: issue_field_history_timespent {
       week,
       month,
       quarter,
-      year
+      year,
     ]
-    sql: ${TABLE}.TIME ;;
+    sql: ${TABLE}.time ;;
   }
 
   # Create a custom primary key using author_id, issue_id and field_id and time.
   dimension: id {
     primary_key: yes
     type: string
-    sql: CONCAT(${author_id}, '-', ${issue_id}, '-', ${field_id}, ${TABLE}.TIME) ;;
+    sql:
+      ${author_id}
+      || ${issue_id}
+      || ${field_id}
+      || ${TABLE}.time
+    ;;
   }
 
   dimension: time_spent {
     type: number
-    sql: CASE 
-            WHEN ${issue_field_history_timespent.field_id} = 'timespent' 
-            THEN CAST(${issue_field_history_timespent.value} as numeric)
-            ELSE NULL 
-          END ;;
+    sql: ${TABLE}.time_spent ;;
   }
 
 
